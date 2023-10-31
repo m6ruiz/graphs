@@ -1,0 +1,189 @@
+---
+title: "test"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+date: "2023-09-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Visualization Midcourse 
+
+```{r}
+library("readr")
+library(tidyverse)
+library(gridExtra)
+library(magrittr)
+```
+```{r}
+midcourse <- read_csv("Midcourse.csv",
+  col_types = list(
+    `This course has been worth my time and effort.` = col_factor(levels = c("Disagree","Strongly disagree","Neither agree or disagree","Agree","Strongly agree"),ordered=TRUE)
+  ))
+levels(midcourse$`This course has been worth my time and effort.`)
+```
+```{r}
+library(ggplot2)
+```
+
+
+```{r}
+
+midcourse %<>% mutate(worth = 
+                       factor(`This course has been worth my time and effort.`,
+                              levels = c("Disagree","Strongly disagree","Neither agree or disagree","Agree","Strongly agree")
+                              ))
+graphpretty<-ggplot(data=midcourse)+geom_bar(mapping=aes(x=`worth`))+ theme_bw(base_size = 11.5)+ labs(x="This course has been worth my time and effort", y="Number of participants")+ (scale_x_discrete(drop=FALSE))
+ggsave("graphpretty.jpg")
+
+graphpretty
+```
+
+```{r}
+
+midcourse %<>% mutate(pacing = 
+                       factor(`How is the pacing of the course content?`,
+                              levels = c("Too slow","Just right","Very fast")
+                              ))
+graphpretty<-ggplot(data=midcourse)+geom_bar(mapping=aes(x=`pacing`))+ theme_bw(base_size = 16)+ labs(x="How is the pacing of the course content?", y="Number of participants")+ (scale_x_discrete(drop=FALSE))
+ggsave("graphpretty.jpg")
+
+graphpretty
+```
+
+```{r}
+midcourse %<>% mutate(useful = 
+                       factor(`How useful to your learning is the Q&A Forum?`,
+                              levels = c("I have not used this","Not at all useful","Slightly useful","Moderately useful","Very useful","Extremely useful")
+                              ))
+graphpretty2<-ggplot(data=midcourse)+geom_bar(mapping=aes(x=`useful`))+ theme_bw(base_size = 16)+ labs(x="How useful to your learning is the Q&A Forum?", y="Number of participants")+ 
+    theme(plot.title = element_text(hjust=0.5, size=12), 
+        axis.text.x = element_text(angle = 90, vjust = 1, hjust=1)) + 
+  scale_x_discrete(drop=FALSE)
+  
+  
+graphpretty2
+```
+```{r}
+midcourse %<>% mutate(useful = 
+                       factor(`How useful for your learning are office hours?`,
+                              levels = c("I have not used this","Not at all useful","Slightly useful","Moderately useful","Very useful","Extremely useful")
+                              ))
+graphpretty2<-ggplot(data=midcourse)+geom_bar(mapping=aes(x=`useful`))+ theme_bw(base_size = 16)+ labs(x="How useful for your learning are office hours?", y="Number of participants")+ 
+    theme(plot.title = element_text(hjust=0.5, size=12), 
+        axis.text.x = element_text(angle = 90, vjust = 1, hjust=1)) + 
+  scale_x_discrete(drop=FALSE)
+  
+  
+graphpretty2
+```
+
+```{r}
+midcourse %<>% mutate(useful = 
+                       factor(`What has been your experience writing code in this course?`,
+                              levels = c("I have not used this","Very Difficult","Difficult","Neutral","Easy","Very easy")
+                              ))
+graphpretty3<-ggplot(data=midcourse)+geom_bar(mapping=aes(x=`useful`))+ theme_bw(base_size = 16)+ labs(x="What has been your experience writing code in this course?", y="Number of participants")+ 
+    theme(plot.title = element_text(hjust=0.5, size=12)+ scale_x_discrete(drop=FALSE))
+  
+  
+graphpretty3
+```
+
+
+## R and R Fundamentals End of Course Survey
+
+
+```{r}
+survey2 <- read_csv("test.csv",
+  col_types = list(
+    "How confident do you feel about applying what you learned?" = col_factor(levels = c("Very Confident", "Confident","Somewhat Confident","Not Confident"),ordered=TRUE)
+  ))
+```
+
+```{r}
+survey2 <- read_csv("test.csv",
+  col_types = list(
+    "How conducive to your learning were the Guided Programming Practices?" = col_factor(levels = c("Very conducive", "Somewhat conducive","Not conducive"),ordered=TRUE)
+  ))
+```
+
+```{r}
+survey2 <- read_csv("test.csv",
+  col_types = list(
+    "How conducive to your learning were the Guided Programming Practices?" = col_factor(levels = c("Very conducive", "Somewhat conducive","Not conducive"),ordered=TRUE)
+  ))
+```
+
+```{r}
+grapheffective<-ggplot(data=survey2)+geom_bar(mapping=aes(x=`How would you rate the instructor's effectiveness in delivering the content?`))+ theme_bw(base_size = 18)+ labs(y="Number of participants")
+ggsave("grapheffective.jpg")
+grapheffective
+```
+
+```{r}
+graphunderstand<-ggplot(data=survey2)+geom_bar(mapping=aes(x=`Please indicate how much you agree with the following statement: I have a good understanding of the concepts presented in this course.`))+ theme_bw(base_size = 18)+ labs(y="Number of participants")
+ggsave("graphunderstand.jpg")
+graphunderstand
+```
+
+```{r}
+graphconfident<-ggplot(data=survey2)+geom_bar(mapping=aes(x=`How confident do you feel about applying what you learned?`))+ theme_bw(base_size = 18)+ labs(y="Number of participants")
+ggsave("graphconfident.jpg")
+graphconfident
+```
+
+```{r}
+graphguide<-ggplot(data=survey2)+geom_bar(mapping=aes(x=`How conducive to your learning were the Guided Programming Practices?`))+ theme_bw(base_size = 18)+ labs(y="Number of participants")
+ggsave("graphguide.jpg")
+graphguide
+```
+
+```{r}
+graphapply<-ggplot(data=survey2)+geom_bar(mapping=aes(x=`How likely are you to apply the skills learned in your work?`))+theme_bw(base_size = 18)+ labs(y="Number of participants")
+ggsave("graphapply.jpg")
+graphapply
+```
+
+```{r}
+survey2 <- read_csv("test.csv",
+  col_types = list(
+    `How do you foresee this training impacting your job performance?` = col_factor(levels = c("No Impact","Minor Improvement","Moderate Improvement","Significant Improvement"),ordered=TRUE),
+     `How likely are you to apply the skills learned in your work?` = col_factor(levels = c("Somewhat Likely","Likely","Very Likely"),ordered=TRUE),
+      `How conducive to your learning were the Guided Programming Practices?` = col_factor(levels = c("Not conducive","Somewhat conducive","Very conducive"),ordered=TRUE),
+     `How confident do you feel about applying what you learned?` = col_factor(levels = c("Not Confident","Somewhat Confident","Confident","Very Confident"),ordered=TRUE),
+    `How would you rate the instructor's effectiveness in delivering the content?` = col_factor(levels = c("Poor","Average","Good","Excellent"),ordered=TRUE),
+        `How relevant was the course content to your professional needs?` = col_factor(levels = c("Not Relevant","Somewhat Relevant","Relevant","Highly Relevant"),ordered=TRUE),
+       `Do you think this training will benefit your organization?` = col_factor(levels = c("Strongly Disagree","Neutral","Agree","Strongly Agree"),ordered=TRUE)
+  ))
+```
+
+```{r}
+graphimp<-ggplot(data=survey2)+geom_bar(mapping=aes(x=`How do you foresee this training impacting your job performance?`))+ theme_bw(base_size = 12)+ labs(y="Number of participants")
+ggsave("graphimp.jpg")
+graphimp
+```
+
+```{r}
+survey2 <- read_csv("test.csv",
+  col_types = list(
+    "Do you think this training will benefit your organization?" = col_factor(levels = c("Strongly Agree","Agree","Neutral","Strongly Disagree"),ordered=TRUE)
+  ))
+```
+
+```{r}
+graphorg<-ggplot(data=survey2)+geom_bar(mapping=aes(x=`Do you think this training will benefit your organization?`))+theme_bw(base_size = 18)+ labs(y="Number of participants")
+ggsave("graphorg.jpg")
+graphorg
+```
+
+```{r}
+graphrelevant<-ggplot(data=survey2)+geom_bar(mapping=aes(x=`How relevant was the course content to your professional needs?`))+ theme_bw(base_size = 18)+ labs(y="Number of participants")
+ggsave("graphrelevant.jpg")
+graphrelevant
+```
+
