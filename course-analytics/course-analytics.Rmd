@@ -8,6 +8,8 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(knitr)
+library(kableExtra)
 ```
 
 
@@ -28,18 +30,16 @@ enrollment_export <- read_csv("enrollments_export.csv")
 r_fund <- filter(enrollment_export, `Listing Name` == "R and RStudio Fundamentals")
 ```
 
-`r dim(r_fund)[1]` total participants enrolled in R/RStudio Fundamentals as of `r Sys.Date()`
+**`r dim(r_fund)[1]`** total participants enrolled in R/RStudio Fundamentals as of `r Sys.Date()`
 
 ```{r include=FALSE}
 one_week_ago <- today()-7
 r_fund_week <- filter(r_fund, `Created At` > one_week_ago)
 ```
 
-`r dim(r_fund_week)[1]` participants enrolled in R/RStudio Fundamentals since `r one_week_ago`
+**`r dim(r_fund_week)[1]`** participants enrolled in R/RStudio Fundamentals since `r one_week_ago`
 
 ## Certificates
-
-TODO: add instructions for getting CSV from certificate generator website
 
 1. Go to [certifier.io](https://certifier.io/), go to "Credentials", select all, export
 2. Rename CSV file "certificates.csv"
@@ -53,19 +53,32 @@ r_fund_certs_week <- filter(r_fund_certs, `Issued on` > one_week_ago)
 
 **`r dim(r_fund_certs)[1]`** received a certificate of completion for R/RStudio Fundamentals as of `r Sys.Date()` and **`r dim(r_fund_certs_week)[1]`** received it since `r one_week_ago`
 
+\newpage
+
 ## Viewership
 
-list of videos and how many have seen each video total
 
-how many have seen all 5
-seen 4
-seen 3
-seen less than 3
-
-```{r}
+```{r include=FALSE}
 r_grades <- read_csv("Grades-R_and_R_Studio_Foundamentals.csv")
 ```
 
+
+```{r echo=FALSE}
+r_grades %>% 
+    summarize_if(is.numeric, sum, na.rm=TRUE) %>%
+    kable(caption = "Views per video")
+```
+
+
+```{r echo=FALSE}
+r_grades %>%
+    mutate(sum = rowSums(across(where(is.numeric)), na.rm = TRUE)) %>%
+    pull(sum) %>%
+    table() %>%
+    kable(caption = "Number of videos watched by participants",
+          col.names = c("Videos completed","Frequency"),
+          align = "c")
+```
 
 
 # Data Visualization, August-December 2024 offering
@@ -80,13 +93,13 @@ r_grades <- read_csv("Grades-R_and_R_Studio_Foundamentals.csv")
 viz <- filter(enrollment_export, `Listing Name` == "Data Visualization for Public Health")
 ```
 
-`r dim(viz)[1]` total participants enrolled in Data Visualization as of `r Sys.Date()`
+**`r dim(viz)[1]`** total participants enrolled in Data Visualization as of `r Sys.Date()`
 
 ```{r include=FALSE}
 viz_week <- filter(viz, `Created At` > one_week_ago)
 ```
 
-`r dim(viz_week)[1]` participants enrolled in Data Visualization since `r one_week_ago`
+**`r dim(viz_week)[1]`** participants enrolled in Data Visualization since `r one_week_ago`
 
 ## Viewership
 
@@ -124,7 +137,9 @@ viz_video_levels <- rev(c("Introduction (1647)",
                           "Choropleth maps (1703)",
                           "Spatial Data Visualization on RStudio Exercise (1722)",
                           "Leaflet Guided R Practice (1716)",
-                          "Creating graphics for difference audience (1706)",))
+                          "Creating graphics for difference audience (1706)"))
+
+# viz_video_weeks <- 
 
 # summarize the data to count viewership
 video_count <- df_long %>%
@@ -136,10 +151,14 @@ video_count <- df_long %>%
 
 
 ```{r echo=FALSE}
+title <- paste0("Views of course videos as of ", today())
+
 # bar chart
 ggplot(video_count, aes(y = Video_fac, x = n)) +
-  geom_bar(stat = "identity") +
-  labs(y = "Video", x = "View Count")
+    geom_bar(stat = "identity", fill = "#2a6d9e") +
+    labs(y = "Video title", x = "View count", 
+         title = title) +
+    theme_minimal()
 ```
 
 
@@ -166,16 +185,86 @@ after that date.
 causal <- filter(enrollment_export, `Listing Name` == "Introduction to Causal Inference for Public Health Professionals")
 ```
 
-`r dim(causal)[1]` total participants enrolled in Introduction to Causal Inference for Public Health Professionals as of `r Sys.Date()`
+**`r dim(causal)[1]`** total participants enrolled in Introduction to Causal Inference for Public Health Professionals as of `r Sys.Date()`
 
 ```{r include=FALSE}
 causal_week <- filter(causal, `Created At` > one_week_ago)
 ```
 
-`r dim(causal_week)[1]` participants enrolled in Introduction to Causal Inference for Public Health Professionals since `r one_week_ago`
+**`r dim(causal_week)[1]`** participants enrolled in Introduction to Causal Inference for Public Health Professionals since `r one_week_ago`
 
-## Viewership
-```{r}
-causal_grades <- read_csv("Grades-R_and_R_Studio_Foundamentals.csv")
+## Certificates
+
+```{r include=FALSE}
+causal_certs <- filter(certificates,
+                       `Group name` == "Causal Trailblazer Tier 1" |
+                           `Group name` == "Causal Navigator Tier 2" |
+                           `Group name` == "Causal Explorer Tier 3" )
+causal_certs_week <- filter(causal_certs, `Issued on` > one_week_ago)
 ```
 
+
+```{r echo=FALSE}
+title2 <- paste0("Total certificates granted as of ", today())
+
+causal_certs %>% 
+    group_by(`Group name`) %>%
+    summarize(Certificates = n()) %>%
+    kable(caption = title2,
+          col.names = c("Tier","Number of certificates"))
+```
+
+```{r echo=FALSE}
+title3 <- paste0("Certificates granted since ", today()-7)
+
+causal_certs %>%
+    filter(`Issued on` > today()-7) %>%
+    group_by(`Group name`) %>%
+    summarize(Certificates = n()) %>%
+    kable(caption = title3,
+          col.names = c("Tier","Number of certificates"))
+```
+
+**`r dim(r_fund_certs)[1]`** received a certificate of completion for R/RStudio Fundamentals as of `r Sys.Date()` and **`r dim(r_fund_certs_week)[1]`** received it since `r one_week_ago`
+
+## Viewership
+
+```{r include=FALSE}
+# causal_grades <- read_csv("Grades-Causal_Inference.csv",
+#                           col_types = "cnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
+#     
+# str(causal_grades)
+# 
+causal_grades <- read_csv("Grade-Causal_Transformed.csv")
+```
+```{r include=FALSE}
+causal_grades_long <- causal_grades %>%
+    pivot_longer(cols = 2:36,
+                 names_to = "Video",  # column with video names
+                 values_to = "Watched") %>% # column with the value 1 for "watched"
+    filter(Watched == 1) # keep only rows where the video was watched
+```
+
+
+```{r include=FALSE}
+causual_video_names <- rev(c("Lecture1b", "Lecture1d", "Lecture2a","Lecture2b", "Lecture2c", "Lecture2d","Lecture2e", "Lecture2f", "Lecture3a", "Lecture4a", "Lecture4b", "Lecture4c", "Lecture4d", "Lecture5a", "Lecture5c", "Lecture5e", "Lecture5d",  "Lecture7a", "Lecture7d", "Lecture8a", "Lecture8b", "Lecture8c", "Lecture9a", "Lecture9b", "Lecture9c", "Lecture9d", "Lecture9e", "Lecture10a", "Lecture10b", "Lecture10c", "Lecture10d", "Lecture11a", "Lecture11b", "Lecture11c", "Lecture11d"))
+
+#  summarize the data to count viewership
+causal_video_count <- causal_grades_long %>%
+    count(Video) %>%
+    mutate(Video_fac = factor(Video,
+                              levels = causual_video_names,
+                              ordered = TRUE))
+```
+
+
+```{r echo=FALSE}
+title4 <- paste0("Views of course videos as of ", today())
+
+# bar chart
+ggplot(causal_video_count, aes(y = Video_fac, x = n)) +
+    geom_bar(stat = "identity", fill = "#2a6d9e") +
+    labs(y = "Video title", x = "View count", 
+         title = title4) +
+    theme_minimal()
+```
