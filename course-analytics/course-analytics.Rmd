@@ -62,6 +62,9 @@ seen 4
 seen 3
 seen less than 3
 
+```{r}
+r_grades <- read_csv("Grades-R_and_R_Studio_Foundamentals.csv")
+```
 
 
 
@@ -104,9 +107,24 @@ df_long <- viz_grades %>%
 
 # put videos in sequential order
 viz_video_levels <- rev(c("Introduction (1647)",
-                          "video 2",
-                          "video 3",
-                          "etc"))
+                          "dplyr basics (1650)",
+                          "Beyond the Bar Graph (1643)",
+                          "Introduction to Data Visualization Using Excel (1644)",
+                          "Data Transformations (1651)",
+                          "Deep Dive: ggplot syntax and bar charts (1645)",
+                          "Color theory and Palettes (1653)",
+                          "Continuous Data (1654)",
+                          "Creating Scatter Plots and Bubble Charts with Excel (1685)",
+                          "Scatterplots and Line Chart Basics (1655)",
+                          "Line Plots and Scatterplots (Continuous Data) (1669)",
+                          "Bubble and Line Charts (1676)",
+                          "Accessibility and Ethics Comprehension Check in (1677)",
+                          "Creating Publication Ready Graphics (1678)",
+                          "Mapping Methods (1702)",
+                          "Choropleth maps (1703)",
+                          "Spatial Data Visualization on RStudio Exercise (1722)",
+                          "Leaflet Guided R Practice (1716)",
+                          "Creating graphics for difference audience (1706)",))
 
 # summarize the data to count viewership
 video_count <- df_long %>%
@@ -157,4 +175,7 @@ causal_week <- filter(causal, `Created At` > one_week_ago)
 `r dim(causal_week)[1]` participants enrolled in Introduction to Causal Inference for Public Health Professionals since `r one_week_ago`
 
 ## Viewership
+```{r}
+causal_grades <- read_csv("Grades-R_and_R_Studio_Foundamentals.csv")
+```
 
