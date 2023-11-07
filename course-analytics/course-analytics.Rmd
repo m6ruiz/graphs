@@ -22,6 +22,9 @@ library(kableExtra)
 2. Rename CSV file "enrollment_export.csv"
 3. Move CSV file into course-analytics folder
 
+TODO: cumulative enrollment over time
+
+
 ```{r import-data, include=FALSE}
 enrollment_export <- read_csv("enrollments_export.csv")
 ```
@@ -54,6 +57,8 @@ r_fund_certs_week <- filter(r_fund_certs, `Issued on` > one_week_ago)
 **`r dim(r_fund_certs)[1]`** received a certificate of completion for R/RStudio Fundamentals as of `r Sys.Date()` and **`r dim(r_fund_certs_week)[1]`** received it since `r one_week_ago`
 
 \newpage
+
+TODO: fix this "viewership" heading getting knit in the wrong place
 
 ## Viewership
 
@@ -89,6 +94,9 @@ r_grades %>%
 
 ## Enrollment
 
+TODO: cumulative enrollment over time
+
+
 ```{r include=FALSE}
 viz <- filter(enrollment_export, `Listing Name` == "Data Visualization for Public Health")
 ```
@@ -102,6 +110,8 @@ viz_week <- filter(viz, `Created At` > one_week_ago)
 **`r dim(viz_week)[1]`** participants enrolled in Data Visualization since `r one_week_ago`
 
 ## Viewership
+
+TODO: color code bars by week
 
 ```{r include=FALSE}
 viz_grades <- read_csv("Grades-Data_Visualization_for_Public_Health.csv")
@@ -163,23 +173,11 @@ ggplot(video_count, aes(y = Video_fac, x = n)) +
 
 
 
-
-How many people have watched each of the videos in the course?
-
-Since there are many videos for this course, this code be summarized in a
-graphic where on the x axis you have video number (organized
-chronologically) and the y axis is the completion rate or the number of
-people who have completed the video. If there are many videos each
-week some indicator of the corresponding week can be added to the plot.
-o When the plot is made, denote the current date (when the data was pulled) and
-add a dashed vertical line to the plot in between videos that occur before and
-after that date.
-
 # Causal Inference, July-September 2024 offering
 
-
-
 ## Enrollment
+
+TODO: cumulative enrollment over time
 
 ```{r include=FALSE}
 causal <- filter(enrollment_export, `Listing Name` == "Introduction to Causal Inference for Public Health Professionals")
@@ -237,6 +235,7 @@ causal_certs %>%
 # 
 causal_grades <- read_csv("Grade-Causal_Transformed.csv")
 ```
+
 ```{r include=FALSE}
 causal_grades_long <- causal_grades %>%
     pivot_longer(cols = 2:36,
@@ -257,6 +256,7 @@ causal_video_count <- causal_grades_long %>%
                               ordered = TRUE))
 ```
 
+TODO: fix title running off edge
 
 ```{r echo=FALSE}
 title4 <- paste0("Views of course videos as of ", today())
