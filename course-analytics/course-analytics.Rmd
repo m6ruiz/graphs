@@ -1,0 +1,177 @@
+---
+title: "CDPH Course Analytics"
+author: "David Connell and Michelle Ruiz"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+
+
+# R/RStudio Fundamentals, on-demand ongoing offering
+
+## Enrollment
+
+1. Download entire enrollment CSV from [catalog analytics](https://cdph.catalog.instructure.com/new_analytics/listings)
+2. Rename CSV file "enrollment_export.csv"
+3. Move CSV file into course-analytics folder
+
+```{r import-data, include=FALSE}
+enrollment_export <- read_csv("enrollments_export.csv")
+```
+
+```{r include=FALSE}
+r_fund <- filter(enrollment_export, `Listing Name` == "R and RStudio Fundamentals")
+```
+
+`r dim(r_fund)[1]` total participants enrolled in R/RStudio Fundamentals as of `r Sys.Date()`
+
+```{r include=FALSE}
+one_week_ago <- today()-7
+r_fund_week <- filter(r_fund, `Created At` > one_week_ago)
+```
+
+`r dim(r_fund_week)[1]` participants enrolled in R/RStudio Fundamentals since `r one_week_ago`
+
+## Certificates
+
+TODO: add instructions for getting CSV from certificate generator website
+
+1. Go to [certifier.io](), go to "Credentials" and select all, export
+2. Rename CSV file "certificates.csv"
+3. Move CSV file into course-analytics folder
+
+```{r include=FALSE}
+certificates <- read_csv("certificates.csv")
+r_fund_certs <- filter(certificates, `Group name` == "R and R Studio Fundamentals")
+r_fund_certs_week <- filter(r_fund_certs, `Issued on` > one_week_ago)
+```
+
+**`r dim(r_fund_certs)[1]`** received a certificate of completion for R/RStudio Fundamentals as of `r Sys.Date()` and **`r dim(r_fund_certs_week)[1]`** received it since `r one_week_ago`
+
+## Viewership
+
+list of videos and how many have seen each video total
+
+how many have seen all 5
+seen 4
+seen 3
+seen less than 3
+
+
+
+
+# Data Visualization, August-December 2024 offering
+
+1. Download **entire gradebook** from canvas as CSV
+2. Rename CSV file to remove date
+3. Move CSV file into course-analytics folder 
+
+## Enrollment
+
+```{r include=FALSE}
+viz <- filter(enrollment_export, `Listing Name` == "Data Visualization for Public Health")
+```
+
+`r dim(viz)[1]` total participants enrolled in Data Visualization as of `r Sys.Date()`
+
+```{r include=FALSE}
+viz_week <- filter(viz, `Created At` > one_week_ago)
+```
+
+`r dim(viz_week)[1]` participants enrolled in Data Visualization since `r one_week_ago`
+
+## Viewership
+
+```{r}
+viz_grades <- read_csv("Grades-Data_Visualization_for_Public_Health.csv")
+```
+
+```{r}
+viz_video_names <- names(viz_grades[seq(from = 6, to = 24)])
+viz_video_views <- tibble(video_names = viz_video_names,
+                          views = NA)
+
+
+dim(filter(viz_grades, `Introduction (1647)` == 1))[1]
+
+
+temp <- viz_grades %>%
+    group_by(across(6:24)) %>%
+    summarise(n = n())
+```
+
+```{r}
+# Assuming your data frame is named df
+# First, let’s convert the data frame from wide to long format
+df_long <- viz_grades %>%
+    select(-(2:5)) %>%
+    select(-(21:39)) %>%
+  pivot_longer(
+    cols = 2:20,
+    names_to = "Video",  # This will be the new column with video names
+    values_to = "Watched" # This will be the new column with the values 1 or 0
+  ) %>%
+    filter(Watched == 1) # Keep only rows where the video was watched
+
+
+
+
+
+# Now, we can summarize the data to count viewership
+video_count <- df_long %>%
+  count(Video) %>%
+  arrange(desc(n)) # Optional: Arrange in descending order of counts
+
+video_count_new <- video_count %>%
+    mutate(order = case_when(
+        Video == "Introduction (1647)" ~ 1,
+        Video == "Color theory and Palettes (1653)" ~ 3)) %>%
+    arrange(order)
+
+
+
+# Now let’s create a bar chart with ggplot2
+ggplot(video_count, aes(y = Video, x = n)) +
+  geom_bar(stat = "identity") +
+  labs(y = "Video", x = "View Count")
+```
+
+
+
+
+How many people have watched each of the videos in the course?
+
+Since there are many videos for this course, this code be summarized in a
+graphic where on the x axis you have video number (organized
+chronologically) and the y axis is the completion rate or the number of
+people who have completed the video. If there are many videos each
+week some indicator of the corresponding week can be added to the plot.
+o When the plot is made, denote the current date (when the data was pulled) and
+add a dashed vertical line to the plot in between videos that occur before and
+after that date.
+
+# Causal Inference, July-September 2024 offering
+
+
+
+## Enrollment
+
+```{r include=FALSE}
+causal <- filter(enrollment_export, `Listing Name` == "Introduction to Causal Inference for Public Health Professionals")
+```
+
+`r dim(causal)[1]` total participants enrolled in Introduction to Causal Inference for Public Health Professionals as of `r Sys.Date()`
+
+```{r include=FALSE}
+causal_week <- filter(causal, `Created At` > one_week_ago)
+```
+
+`r dim(causal_week)[1]` participants enrolled in Introduction to Causal Inference for Public Health Professionals since `r one_week_ago`
+
+## Viewership
+
