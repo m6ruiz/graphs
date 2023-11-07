@@ -41,7 +41,7 @@ r_fund_week <- filter(r_fund, `Created At` > one_week_ago)
 
 TODO: add instructions for getting CSV from certificate generator website
 
-1. Go to [certifier.io](), go to "Credentials" and select all, export
+1. Go to [certifier.io](https://certifier.io/), go to "Credentials", select all, export
 2. Rename CSV file "certificates.csv"
 3. Move CSV file into course-analytics folder
 
@@ -87,56 +87,39 @@ viz_week <- filter(viz, `Created At` > one_week_ago)
 
 ## Viewership
 
-```{r}
+```{r include=FALSE}
 viz_grades <- read_csv("Grades-Data_Visualization_for_Public_Health.csv")
-```
-
-```{r}
 viz_video_names <- names(viz_grades[seq(from = 6, to = 24)])
-viz_video_views <- tibble(video_names = viz_video_names,
-                          views = NA)
-
-
-dim(filter(viz_grades, `Introduction (1647)` == 1))[1]
-
-
-temp <- viz_grades %>%
-    group_by(across(6:24)) %>%
-    summarise(n = n())
 ```
 
-```{r}
-# Assuming your data frame is named df
-# First, let’s convert the data frame from wide to long format
+```{r include=FALSE}
 df_long <- viz_grades %>%
-    select(-(2:5)) %>%
-    select(-(21:39)) %>%
-  pivot_longer(
-    cols = 2:20,
-    names_to = "Video",  # This will be the new column with video names
-    values_to = "Watched" # This will be the new column with the values 1 or 0
-  ) %>%
-    filter(Watched == 1) # Keep only rows where the video was watched
+    filter(Student != "Points Possible", Student != "Student, Test") %>% # remove "points possible row from gradebook and the test student
+    select(-(2:5)) %>% # remove unneeded data columns
+    select(-(21:39)) %>% # remove grade columns that aren't for individual videos
+    pivot_longer(cols = 2:20,
+                 names_to = "Video",  # column with video names
+                 values_to = "Watched") %>% # column with the value 1 for "watched"
+    filter(Watched == 1) # keep only rows where the video was watched
 
+# put videos in sequential order
+viz_video_levels <- rev(c("Introduction (1647)",
+                          "video 2",
+                          "video 3",
+                          "etc"))
 
-
-
-
-# Now, we can summarize the data to count viewership
+# summarize the data to count viewership
 video_count <- df_long %>%
-  count(Video) %>%
-  arrange(desc(n)) # Optional: Arrange in descending order of counts
-
-video_count_new <- video_count %>%
-    mutate(order = case_when(
-        Video == "Introduction (1647)" ~ 1,
-        Video == "Color theory and Palettes (1653)" ~ 3)) %>%
-    arrange(order)
+    count(Video) %>%
+    mutate(Video_fac = factor(Video,
+                              levels = viz_video_levels,
+                              ordered = TRUE))
+```
 
 
-
-# Now let’s create a bar chart with ggplot2
-ggplot(video_count, aes(y = Video, x = n)) +
+```{r echo=FALSE}
+# bar chart
+ggplot(video_count, aes(y = Video_fac, x = n)) +
   geom_bar(stat = "identity") +
   labs(y = "Video", x = "View Count")
 ```
